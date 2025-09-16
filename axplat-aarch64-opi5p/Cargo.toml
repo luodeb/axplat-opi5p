@@ -1,0 +1,34 @@
+[package]
+name = "axplat-aarch64-opi5p"
+version.workspace = true
+edition.workspace = true
+description = "Implementation of `axplat` hardware abstraction layer for Rockchip RK3588."
+documentation = "https://docs.rs/axplat-aarch64-rk3588"
+keywords = ["arceos", "os", "hal", "embedded", "aarch64"]
+categories = ["embedded", "no-std", "hardware-support", "os"]
+authors = [
+    "Yuekai Jia <equation618@gmail.com>",
+    "Youjie Zheng <Azure_stars@126.com>",
+    "Luoyuan Xiao <xiaoluoyuan@163.com>",
+]
+license.workspace = true
+repository = "https://github.com/elliott10/axplat-aarch64-rk3588"
+
+[features]
+fp-simd = ["axcpu/fp-simd"]
+rtc = []
+irq = ["axplat/irq"]
+smp = ["axplat/smp", "kspin/smp"]
+
+[dependencies]
+kspin = "0.1"
+page_table_entry = "0.5"
+dw_apb_uart = "0.1"
+
+axconfig-macros = "0.2"
+axcpu = "0.2"
+axplat = "0.2.0"
+axplat-aarch64-peripherals = "0.2.0"
+
+[package.metadata.docs.rs]
+targets = ["aarch64-unknown-none"]

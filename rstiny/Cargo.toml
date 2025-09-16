@@ -1,0 +1,13 @@
+[package]
+name = "rstiny"
+version.workspace = true
+edition.workspace = true
+homepage.workspace = true
+
+[dependencies]
+log = "0.4"
+talc = "4.4.3"
+axplat-aarch64-opi5p = { workspace = true }
+axplat = "0.2.0"
+spin = "0.10.0"
+
