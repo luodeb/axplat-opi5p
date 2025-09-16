@@ -3,6 +3,8 @@
 #[macro_use]
 extern crate axplat;
 
+extern crate log;
+
 pub mod config {
     //! Platform configuration module.
     //!
