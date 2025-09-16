@@ -5,7 +5,6 @@ APP ?= rstiny
 MODE ?= release
 TARGET = aarch64-unknown-none-softfloat
 LOG := info
-DISK_IMG := test.img
 ARCH = aarch64
 
 ifeq ($(MODE), release)

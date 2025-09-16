@@ -8,6 +8,7 @@ PLAT_CONFIG = $(PWD)/axplat-aarch64-opi5p/axconfig.toml
 
 kernel_elf = $(PWD)/target/$(TARGET)/$(MODE)/$(PROJECT_NAME)
 kernel_bin = $(kernel_elf).bin
+kernel_img = $(kernel_elf).img
 kernel_asm = $(kernel_elf)_asm.txt
 
 ifeq ($(MODE), release)
@@ -55,12 +56,14 @@ build: $(OUT_CONFIG)
 
 img: build
 	@echo "Make $(PROJECT_NAME) on Orange Pi 5..."
-	sudo bash $(TOOL_PATH)/make_disk.sh $(DISK_IMG) $(kernel_bin)
+	sudo bash $(TOOL_PATH)/make_disk.sh $(kernel_img) $(kernel_bin)
 
-flash: 
+$(kernel_img): img
+
+flash: $(kernel_img)
 	@echo "Flash $(PROJECT_NAME) to Orange Pi 5..."
-	bash $(TOOL_PATH)/make_flash.sh $(DISK_IMG)
+	bash $(TOOL_PATH)/make_flash.sh $(kernel_img)
 
-upload: 
+upload: $(kernel_img)
 	@echo "Upload $(PROJECT_NAME) to Orange Pi 5..."
-	bash $(TOOL_PATH)/upload_flash.sh $(DISK_IMG)
+	bash $(TOOL_PATH)/upload_flash.sh $(kernel_img)

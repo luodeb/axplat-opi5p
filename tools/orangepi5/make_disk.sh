@@ -2,7 +2,7 @@
 
 # Script to create a 64MB img file with FAT32 partition
 # Author: Generated for creating FAT32 disk image
-# Usage: make_disk.sh <IMG_FILE> <KERNEL_BIN>
+# Usage: make_disk.sh <IMG_FILE> <KERNEL_BIN> <BOOT_CMD_FILE>
 
 set -e  # Exit on any error
 
@@ -61,9 +61,11 @@ fi
 
 IMG_FILE="$1"
 KERNEL_BIN="$2"
+
+ORANGEPI5_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+BOOT_CMD_FILE="${ORANGEPI5_DIR}/boot.cmd"
 IMG_SIZE="64M"
 MOUNT_POINT="/tmp/fat32_mount"
-BOOT_CMD_FILE="boot.cmd"
 
 # Check if kernel binary exists
 if [ ! -f "$KERNEL_BIN" ]; then
@@ -172,7 +174,7 @@ success "Copied $KERNEL_BIN to kernel.bin and boot.scr to the image"
 # Cleanup
 step "Cleaning up"
 info "Unmounting filesystem..."
-umount "$MOUNT_POINT"
+sudo umount "$MOUNT_POINT"
 rmdir "$MOUNT_POINT"
 
 # Clean up kpartx mapping if used

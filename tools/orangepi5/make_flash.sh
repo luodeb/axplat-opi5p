@@ -51,7 +51,7 @@ step() {
 }
 
 # Configuration
-ORANGEPI5_DIR="tools/orangepi5"
+ORANGEPI5_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 MINILOADER="$ORANGEPI5_DIR/MiniLoaderAll.bin"
 UBOOT="$ORANGEPI5_DIR/u-boot-orangepi5-plus-spi.bin"
 
