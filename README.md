@@ -31,6 +31,10 @@ sudo rkdeveloptool ld
 
 每次烧写都需要先烧写 MiniLoaderAll.bin，这里是启动烧写流程必须的驱动程序，识别 SD 卡，EMMC 芯片都需要它，并且在每次断电都会消失
 
+``` bash
+sudo rkdeveloptool db MiniLoaderAll.bin # 烧写 MiniLoaderAll.bin
+```
+
 ## 烧写 U-Boot (仅第一次)
 
 烧写完 MiniLoaderAll.bin 以后，就可以识别出 SPI NOR FLASH 了，使用命令
