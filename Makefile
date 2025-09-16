@@ -22,7 +22,8 @@ export APP
 clean:
 	@echo "Cleaning build artifacts..."
 	cargo clean
-	rm -f $(DISK_IMG)
+	rm -f $(DISK_IMG) .axconfig.toml
+	@echo "Clean completed."
 
 build:
 	@$(MAKE) -C $(APP) build

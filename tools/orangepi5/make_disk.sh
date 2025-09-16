@@ -150,17 +150,6 @@ echo ""
 info "Disk image details:"
 fdisk -l "$IMG_FILE"
 
-# Generate boot.cmd dynamically
-step "Generating boot files"
-info "Creating ${BOOT_CMD_FILE}..."
-
-cat > "$BOOT_CMD_FILE" << EOF
-mmc dev 1
-fatload mmc 1:1 0x400000 kernel.bin
-go 0x400000
-EOF
-success "Generated $BOOT_CMD_FILE"
-
 # Compile boot.cmd to boot.scr using mkimage
 info "Compiling boot.cmd to boot.scr..."
 if command -v mkimage >/dev/null 2>&1; then
@@ -196,7 +185,7 @@ losetup -d "$LOOP_DEVICE"
 
 # Clean up temporary files
 info "Removing temporary files..."
-rm -f $BOOT_CMD_FILE boot.scr
+rm -f boot.scr
 success "Cleaned up temporary files"
 
 echo ""
