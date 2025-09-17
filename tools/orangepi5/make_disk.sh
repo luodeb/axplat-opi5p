@@ -2,7 +2,7 @@
 
 # Script to create a 64MB img file with FAT32 partition
 # Author: Generated for creating FAT32 disk image
-# Usage: make_disk.sh <IMG_FILE> <KERNEL_BIN> <BOOT_CMD_FILE>
+# Usage: make_disk.sh <IMG_FILE> <KERNEL_BIN>
 
 set -e  # Exit on any error
 
