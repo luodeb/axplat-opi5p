@@ -84,14 +84,15 @@ success "Created $IMG_FILE (64MB)"
 step "Creating partition table"
 # Use fdisk to create MBR partition table
 (
-echo o      # Create a new empty DOS partition table
+echo g      # Create a new empty DOS partition table
 echo n      # Add a new partition
-echo p      # Primary partition
 echo 1      # Partition number
 echo        # First sector (Accept default: 2048)
 echo        # Last sector (Accept default: varies)
-echo t      # Change partition type
-echo c      # Set type to W95 FAT32 (LBA)
+echo x    # Extra functionality (experts only)
+echo n     # Change name of partition
+echo root # Set partition name to 'root'
+echo r     # Return to main menu
 echo w      # Write changes
 ) | fdisk "$IMG_FILE"
 
@@ -170,6 +171,9 @@ sudo cp "$KERNEL_BIN" "$MOUNT_POINT/kernel.bin"
 info "Copying boot.scr..."
 sudo cp boot.scr "$MOUNT_POINT/boot.scr"
 success "Copied $KERNEL_BIN to kernel.bin and boot.scr to the image"
+# sudo cp -r "$ORANGEPI5_DIR"/disk/* "$MOUNT_POINT/"
+# ls -al "$MOUNT_POINT"
+# success "All files copied to the image"
 
 # Cleanup
 step "Cleaning up"

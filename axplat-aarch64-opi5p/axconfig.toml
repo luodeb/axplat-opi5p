@@ -14,7 +14,7 @@ cpu-num = 1 # uint
 # Base address of the whole physical memory.
 phys-memory-base = 0x0020_0000 # uint
 # Size of the whole physical memory.
-phys-memory-size = 0x4000_0000 # uint
+phys-memory-size = 0x8000_0000 # uint
 # Base physical address of the kernel image.
 kernel-base-paddr = 0x0040_0000 # uint
 # Base virtual address of the kernel image.
@@ -56,7 +56,8 @@ mmio-ranges = [
 ] # [(uint, uint)]
 # VirtIO MMIO ranges with format (`base_paddr`, `size`).
 virtio-mmio-ranges = [] # [(uint, uint)]
-
+initrd-range-base = 0x4000_0000
+initrd-range-size = 0x1000_0000
 # UART Address
 uart-paddr = 0xfeb50000 # uint
 # UART IRQ number (SPI, 0xd5)

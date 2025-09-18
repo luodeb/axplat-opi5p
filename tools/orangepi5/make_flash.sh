@@ -141,8 +141,8 @@ fi
 
 # Step 4: Flash disk image
 step "Flashing disk image"
-info "Switching to SD card (cs 2)..."
-if bash -c "sudo rkdeveloptool cs 2"; then
+info "Switching to eMMC (cs 1)..."
+if bash -c "sudo rkdeveloptool cs 1"; then
     success "Switched to SD card successfully"
 else
     error "Failed to switch to SD card"
