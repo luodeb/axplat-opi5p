@@ -83,6 +83,33 @@ unsafe extern "C" fn _start() -> ! {
     )
 }
 
+#[unsafe(naked)]
+unsafe extern "C" fn init_mmu() {
+    core::arch::naked_asm!(
+        "
+        mov	x9, #0x3510     // =13584
+        mov	w8, #0xff04     // =65284
+        movk	x9, #0xb510, lsl #16
+        movk	w8, #0x44, lsl #16
+        msr	MAIR_EL1, x8
+        movk	x9, #0x5, lsl #32
+        msr	TCR_EL1, x9
+        isb
+        msr	TTBR0_EL1, x0
+        msr	TTBR1_EL1, x0
+        tlbi	vmalle1
+        dsb	sy
+        isb
+        mrs	x8, SCTLR_EL1
+        mov	w9, #0x1005     // =4101
+        orr	x8, x8, x9
+        msr	SCTLR_EL1, x8
+        isb
+        ret
+    "
+    );
+}
+
 /// The earliest entry point for the primary CPU.
 #[unsafe(naked)]
 #[unsafe(link_section = ".text.boot")]
@@ -126,7 +153,7 @@ unsafe extern "C" fn _start_primary() -> ! {
         blr     x8
         b      .",
         switch_to_el1 = sym axcpu::init::switch_to_el1,
-        init_mmu = sym axcpu::init::init_mmu,
+        init_mmu = sym init_mmu,
         enable_fp = sym enable_fp,
         init_boot_page_table = sym init_boot_page_table,
         boot_stack = sym BOOT_STACK,

@@ -29,6 +29,6 @@ axconfig-macros = "0.2"
 axcpu = "0.2"
 axplat = "0.2.0"
 axplat-aarch64-peripherals = "0.2.0"
-
+aarch64-cpu = "10.0"
 [package.metadata.docs.rs]
 targets = ["aarch64-unknown-none"]
