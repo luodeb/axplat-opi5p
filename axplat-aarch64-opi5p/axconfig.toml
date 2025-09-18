@@ -53,6 +53,7 @@ mmio-ranges = [
     [0xfe680000, 0x100000], # arm,gic-v3
     [0xfe180000, 0x10000],  # rockchip,rk3588-pcie
     [0xfe190000, 0x10000],  # rockchip,rk3588-pcie
+    [0xfe2c0000, 0x10000],  # rockchip,sdmmc
 ] # [(uint, uint)]
 # VirtIO MMIO ranges with format (`base_paddr`, `size`).
 virtio-mmio-ranges = [] # [(uint, uint)]
