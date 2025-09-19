@@ -3,6 +3,9 @@
 # ==============================================
 # 刷写内核脚本
 # 适用于 Rockchip 平台
+# Usage: ./make_flash.sh [target=SD|EMMC] # Flash Kernel to SD or eMMC
+#        ./make_flash.sh [target=SD|EMMC] rootfs=path/to/rootfs.img # Flash custom rootfs
+#        ./make_flash.sh [target=SD|EMMC] partition # Flash custom partition table
 # ==============================================
 
 set -e  # 遇到错误立即退出
@@ -12,6 +15,8 @@ BOOT_IMAGE="boot_sparse.img"
 ORANGEPI5_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 MINILOADER="${ORANGEPI5_DIR}/MiniLoaderAll.bin"
 PARTITION_TXT="${ORANGEPI5_DIR}/parameter.txt"
+FLASH_TARGET=SD # 刷写目标 (SD 或 EMMC)
+ROOTFS=""
 
 # 颜色输出定义
 RED='\033[0;31m'
@@ -61,11 +66,37 @@ make_boot_image() {
 flash_miniloader() {
     info "Flashing Miniloader"
     info "Downloading bootloader ${MINILOADER}..."
-    if bash -c "sudo rkdeveloptool db ${MINILOADER}"; then
+    if timeout 4 bash -c "sudo rkdeveloptool db ${MINILOADER}"; then
         info "Bootloader downloaded successfully"
     else
-        error "Failed to download bootloader"
+        if [ $? -eq 124 ]; then
+            warn "Timeout: Failed to download bootloader within 4 seconds"
+            error "Restart Maskrom mode and try again"
+        else
+            error "Failed to download bootloader"
+        fi
         exit 1
+    fi
+}
+
+check_sdmmc() {
+    info "Checking SD/MMC status..."
+    if [ "$FLASH_TARGET" = "SD" ]; then
+        info "Flashing to SD card"
+        if bash -c "sudo rkdeveloptool cs 2"; then
+            info "Switched to SD card successfully"
+        else
+            error "Failed to switch to SD card"
+            exit 1
+        fi
+    else
+        info "Flashing to eMMC"
+        if bash -c "sudo rkdeveloptool cs 1"; then
+            info "Switched to eMMC successfully"
+        else
+            error "Failed to switch to eMMC"
+            exit 1
+        fi
     fi
 }
 
@@ -90,6 +121,19 @@ flash_boot_image() {
     fi
 }
 
+flash_rootfs() {
+    info "Flashing root filesystem..."
+    if [ ! -f "$ROOTFS" ]; then
+        error "Rootfs file '$ROOTFS' not found"
+    fi
+    if bash -c "sudo rkdeveloptool wlx root ${ROOTFS}"; then
+        info "Root filesystem flashed successfully"
+    else
+        error "Failed to flash root filesystem"
+        exit 1
+    fi
+}
+
 restart_device() {
     info "Rebooting device..."
     if bash -c "sudo rkdeveloptool rd"; then
@@ -105,11 +149,52 @@ main() {
     echo " Orange Pi 5 Flashing Script"
     echo "=========================================="
     
+    # 解析命令行参数
+    for arg in "$@"; do
+        case "$arg" in
+            rootfs=*)
+                ROOTFS_PATH="${arg#*=}"
+                if [ ! -f "$ROOTFS_PATH" ]; then
+                    error "Rootfs file '$ROOTFS_PATH' not found"
+                fi
+                ;;
+            target=*)
+                TARGET="${arg#*=}"
+                if [ "$TARGET" != "SD" ] && [ "$TARGET" != "EMMC" ]; then
+                    error "Invalid target '$TARGET'. Must be 'SD' or 'EMMC'"
+                fi
+                FLASH_TARGET="$TARGET"
+                ;;
+            partition)
+                PARTITION_ONLY=true
+                ;;
+            *)
+                error "Unknown argument: $arg"
+                ;;
+        esac
+    done
+
     check_device_connected
-    make_boot_image
     flash_miniloader
-    flash_partition
-    flash_boot_image
+    check_sdmmc
+    
+
+    if [ "$PARTITION_ONLY" = true ]; then
+        flash_partition
+        info "Partition table flashed. Exiting."
+        restart_device
+        exit 0
+    fi
+
+    if [ -n "$ROOTFS_PATH" ]; then
+        info "Using custom rootfs: $ROOTFS_PATH"
+        ROOTFS="$ROOTFS_PATH"
+        flash_rootfs
+    elif [ -z "$ROOTFS" ]; then
+        make_boot_image
+        flash_boot_image
+    fi
+
     restart_device
     
     echo "=========================================="

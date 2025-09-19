@@ -111,6 +111,7 @@ mount_and_copy() {
     info "卸载镜像..."
     sudo umount "$MOUNT_POINT"
     sudo rmdir "$MOUNT_POINT"
+    rm boot.scr
 }
 
 # 主执行流程
