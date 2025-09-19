@@ -44,7 +44,7 @@ sudo rkdeveloptool cs 9 # 切换到 SPI NOR FLASH 模式 [storage: 1=EMMC, 2=SD,
 sudo rkdeveloptool wl 0 u-boot-orangepi5-plus-spi.bin # 烧写 U-Boot
 ```
 
-## 烧写 SD 卡
+## 烧写 SDMMC / eMMC
 
 因为 U-Boot 的自动启动命令与 SD 卡的格式以及分区有关，所以这里直接制作了完整的 img 镜像，使用脚本 `./tools/orangepi5/make_boot.sh` 可以自动生成 SD 卡镜像以及 `boot.scr` 启动脚本。
 
@@ -52,30 +52,23 @@ sudo rkdeveloptool wl 0 u-boot-orangepi5-plus-spi.bin # 烧写 U-Boot
 bash ./tools/orangepi5/make_boot.sh <KERNEL_IMAGE> <IMG_FILE_NAME> 
 ```
 
-将镜像烧写进去，使用命令
-
-```bash
+切换到对应的存储设备, 如 sd 卡
+``` bash
 sudo rkdeveloptool cs 2 # 切换到SD卡模式 [storage: 1=EMMC, 2=SD, 9=SPINOR]
-sudo rkdeveloptool gpt tools/orangepi5/parameter.txt
-sudo rkdeveloptool ppt # 打印 GPT 分区表
-sudo rkdeveloptool wl 0 <IMG_FILE_NAME> # 直接烧写SD卡镜像
 ```
 
-## 烧写 eMMC
+创建分区表 (仅需要格式化硬盘的时候)
 
-因为 U-Boot 的自动启动命令与 SD 卡的格式以及分区有关，所以这里直接制作了完整的 img 镜像，使用脚本 `./tools/orangepi5/make_boot.sh` 可以自动生成 SD 卡镜像以及 `boot.scr` 启动脚本。
-
-```bash
-bash ./tools/orangepi5/make_boot.sh <KERNEL_IMAGE> <IMG_FILE_NAME> 
+如果你的存储设备里面没有初始化 GPT 分区表，那么就需要手动创建分区表
+``` bash
+sudo rkdeveloptool gpt tools/orangepi5/parameter.txt 
+sudo rkdeveloptool ppt # 打印 GPT 分区表
 ```
 
 将镜像烧写进去，使用命令
 
 ```bash
-sudo rkdeveloptool cs 1 # 切换到SD卡模式 [storage: 1=EMMC, 2=SD, 9=SPINOR]
-sudo rkdeveloptool gpt tools/orangepi5/parameter.txt
-sudo rkdeveloptool ppt # 打印 GPT 分区表
-sudo rkdeveloptool wl 0 <IMG_FILE_NAME> # 直接烧写SD卡镜像
+sudo rkdeveloptool wlx boot <IMG_FILE_NAME> # 直接烧写SD卡镜像
 ```
 
 ## 重启香橙派
