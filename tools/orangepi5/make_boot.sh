@@ -1,18 +1,27 @@
 #!/bin/bash
 
 # ==============================================
-# 创建 sparse ext4 镜像并刷写内核脚本
+# 创建 sparse ext4 镜像脚本
 # 适用于 Rockchip 平台
+# Usage: ./make_boot.sh <starry_image> <output_name> 
 # ==============================================
 
 set -e  # 遇到错误立即退出
 
+# 判断是否有两个参数
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <starry_image> <output_name>"
+    exit 1
+fi
+
 # 配置参数
-IMAGE_SIZE="64M"          # 镜像大小
-MOUNT_POINT="/mnt/kernel_img"  # 挂载点
-OUTPUT_IMAGE="kernel_sparse.img"  # 输出镜像文件名
-KERNEL_SOURCE="starry-mix_aarch64-opi5p.uimg"  # 源内核文件
+IMAGE_SIZE="100M"          # 镜像大小
+MOUNT_POINT="/mnt/boot_img"  # 挂载点
+OUTPUT_IMAGE="$2"  # 输出镜像文件名
+KERNEL_SOURCE="$1"  # 源内核文件
 TARGET_PATH="/kernel.uimg"   # 镜像中的目标路径
+DTB_PATH="/rk3588-orangepi-5-plus.dtb" # 设备树文件路径
+ORANGEPI5_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # 颜色输出定义
 RED='\033[0;31m'
@@ -59,7 +68,7 @@ trap cleanup EXIT INT TERM
 # 检查源文件是否存在
 check_source_file() {
     if [ ! -f "$KERNEL_SOURCE" ]; then
-        error "源内核文件 '$KERNEL_SOURCE' 不存在"
+        error "请提供有效的内核文件路径"
     fi
     info "找到内核文件: $(du -h "$KERNEL_SOURCE" | cut -f1)"
 }
@@ -85,36 +94,23 @@ mount_and_copy() {
     
     info "挂载镜像..."
     sudo mount -o loop "$OUTPUT_IMAGE" "$MOUNT_POINT"
+
+    info "制作 boot.src 文件..."
+    mkimage -A arm -T script -C none -n "TF boot" -d "${ORANGEPI5_DIR}/boot.cmd" boot.scr
     
-    info "复制内核文件到镜像中..."
+    info "复制 boot 文件到镜像中..."
+    sudo cp boot.scr "${MOUNT_POINT}"
+    
+    info "复制 kernel 文件到镜像中..."
     sudo cp "$KERNEL_SOURCE" "${MOUNT_POINT}${TARGET_PATH}"
 
-    sudo cp /home/debin/Codes/starry/starry-mix/module-local/axplat-opi5p/tools/orangepi5/rk3588-orangepi-5-plus.dtb "${MOUNT_POINT}/rk3588-orangepi-5-plus.dtb"
-    
-    # 检查文件是否复制成功
-    if sudo [ -f "${MOUNT_POINT}${TARGET_PATH}" ]; then
-        copied_size=$(sudo du -h "${MOUNT_POINT}${TARGET_PATH}" | cut -f1)
-        info "文件复制成功: ${TARGET_PATH} (${copied_size})"
-        sudo ls -al "${MOUNT_POINT}"
-    else
-        error "文件复制失败"
-    fi
+    sudo cp "${ORANGEPI5_DIR}/$DTB_PATH" "${MOUNT_POINT}/rk3588-orangepi-5-plus.dtb"
+
+    sudo ls -al "${MOUNT_POINT}"
     
     info "卸载镜像..."
     sudo umount "$MOUNT_POINT"
     sudo rmdir "$MOUNT_POINT"
-}
-
-# 检查并优化镜像
-check_and_optimize_image() {
-    info "检查文件系统..."
-    e2fsck -f -y "$OUTPUT_IMAGE" > /dev/null 2>&1 || warn "文件系统检查发现并修复了一些问题"
-    
-    info "调整文件系统大小以节省空间..."
-    resize2fs -M "$OUTPUT_IMAGE" > /dev/null 2>&1
-    
-    final_size=$(du -h "$OUTPUT_IMAGE" | cut -f1)
-    info "镜像最终大小: $final_size"
 }
 
 # 主执行流程
@@ -131,7 +127,6 @@ main() {
     
     create_sparse_image
     mount_and_copy
-    check_and_optimize_image
     
     echo "=========================================="
     echo "镜像准备完成: $OUTPUT_IMAGE"
