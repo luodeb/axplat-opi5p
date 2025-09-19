@@ -49,13 +49,15 @@ sudo rkdeveloptool wl 0 u-boot-orangepi5-plus-spi.bin # 烧写 U-Boot
 因为 U-Boot 的自动启动命令与 SD 卡的格式以及分区有关，所以这里直接制作了完整的 img 镜像，使用脚本 `./tools/orangepi5/make_disk.sh` 可以自动生成 SD 卡镜像以及 `boot.scr` 启动脚本。
 
 ```bash
-bash ./tools/orangepi5/make_disk.sh <IMG_FILE_NAME> <KERNEL_BIN>
+bash ./tools/orangepi5/make_boot.sh <KERNEL_IMAGE> <IMG_FILE_NAME> 
 ```
 
 将镜像烧写进去，使用命令
 
 ```bash
 sudo rkdeveloptool cs 2 # 切换到SD卡模式 [storage: 1=EMMC, 2=SD, 9=SPINOR]
+sudo rkdeveloptool gpt tools/orangepi5/parameter.txt
+sudo rkdeveloptool ppt # 打印 GPT 分区表
 sudo rkdeveloptool wl 0 <IMG_FILE_NAME> # 直接烧写SD卡镜像
 ```
 
@@ -64,13 +66,15 @@ sudo rkdeveloptool wl 0 <IMG_FILE_NAME> # 直接烧写SD卡镜像
 因为 U-Boot 的自动启动命令与 SD 卡的格式以及分区有关，所以这里直接制作了完整的 img 镜像，使用脚本 `./tools/orangepi5/make_disk.sh` 可以自动生成 SD 卡镜像以及 `boot.scr` 启动脚本。
 
 ```bash
-bash ./tools/orangepi5/make_disk.sh <IMG_FILE_NAME> <KERNEL_BIN>
+bash ./tools/orangepi5/make_boot.sh <KERNEL_IMAGE> <IMG_FILE_NAME> 
 ```
 
 将镜像烧写进去，使用命令
 
 ```bash
 sudo rkdeveloptool cs 1 # 切换到SD卡模式 [storage: 1=EMMC, 2=SD, 9=SPINOR]
+sudo rkdeveloptool gpt tools/orangepi5/parameter.txt
+sudo rkdeveloptool ppt # 打印 GPT 分区表
 sudo rkdeveloptool wl 0 <IMG_FILE_NAME> # 直接烧写SD卡镜像
 ```
 
