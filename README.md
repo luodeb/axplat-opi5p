@@ -46,7 +46,7 @@ sudo rkdeveloptool wl 0 u-boot-orangepi5-plus-spi.bin # 烧写 U-Boot
 
 ## 烧写 SD 卡
 
-因为 U-Boot 的自动启动命令与 SD 卡的格式以及分区有关，所以这里直接制作了完整的 img 镜像，使用脚本 `./tools/orangepi5/make_disk.sh` 可以自动生成 SD 卡镜像以及 `boot.scr` 启动脚本。
+因为 U-Boot 的自动启动命令与 SD 卡的格式以及分区有关，所以这里直接制作了完整的 img 镜像，使用脚本 `./tools/orangepi5/make_boot.sh` 可以自动生成 SD 卡镜像以及 `boot.scr` 启动脚本。
 
 ```bash
 bash ./tools/orangepi5/make_boot.sh <KERNEL_IMAGE> <IMG_FILE_NAME> 
@@ -63,7 +63,7 @@ sudo rkdeveloptool wl 0 <IMG_FILE_NAME> # 直接烧写SD卡镜像
 
 ## 烧写 eMMC
 
-因为 U-Boot 的自动启动命令与 SD 卡的格式以及分区有关，所以这里直接制作了完整的 img 镜像，使用脚本 `./tools/orangepi5/make_disk.sh` 可以自动生成 SD 卡镜像以及 `boot.scr` 启动脚本。
+因为 U-Boot 的自动启动命令与 SD 卡的格式以及分区有关，所以这里直接制作了完整的 img 镜像，使用脚本 `./tools/orangepi5/make_boot.sh` 可以自动生成 SD 卡镜像以及 `boot.scr` 启动脚本。
 
 ```bash
 bash ./tools/orangepi5/make_boot.sh <KERNEL_IMAGE> <IMG_FILE_NAME> 
