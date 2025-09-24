@@ -43,8 +43,8 @@ pub fn init_irq() {
 
 /// UART IRQ Handler
 #[allow(dead_code)]
-pub fn handle() {
-    panic!("Uart IRQ Handler");
+pub fn handle(irq: usize) {
+    panic!("Uart IRQ Handler: {irq}");
 }
 
 struct ConsoleIfImpl;
