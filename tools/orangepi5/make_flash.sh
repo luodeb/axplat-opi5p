@@ -10,7 +10,7 @@
 
 set -e  # 遇到错误立即退出
 
-UIMAGE="starry-mix_aarch64-opi5p.uimg"
+UIMAGE="StarryOS_aarch64-opi5p.uimg"
 BOOT_IMAGE="boot_sparse.img"
 ORANGEPI5_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 MINILOADER="${ORANGEPI5_DIR}/MiniLoaderAll.bin"
