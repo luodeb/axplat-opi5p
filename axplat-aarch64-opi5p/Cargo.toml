@@ -11,7 +11,6 @@ authors = [
     "Youjie Zheng <Azure_stars@126.com>",
     "Luoyuan Xiao <xiaoluoyuan@163.com>",
 ]
-license.workspace = true
 repository = "https://github.com/elliott10/axplat-aarch64-rk3588"
 
 [features]
